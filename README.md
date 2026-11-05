@@ -7,103 +7,95 @@
 
 ## 🌊 Overview
 
-**HYDRAFORGE** is an automated, secure evaluation platform designed to benchmark machine-learning models and forecasting agents predicting river discharge. It evaluates participant-submitted GitHub repositories against organizer-controlled, unseen benchmark cases and hidden ground-truth labels across six deterministic dimensions:
+**HYDRAFORGE** is an automated, secure evaluation platform designed to benchmark machine-learning models predicting river discharge and flood events. It accepts participant GitHub repositories and evaluates them under strict airgapped conditions against unseen benchmark test splits and hidden ground-truth labels.
 
-| Dimension | Provisional Weight | Metric Formulation |
-|---|---:|---|
-| **Forecast Skill** | 25 pts | Persistence-relative Nash-Sutcliffe Efficiency (NSE), RMSE, MAE |
-| **Event Detection** | 25 pts | Q95 & Q99 Flood Peak Detection (Prevalence-Normalized AUPRC, Brier Skill, CSI) |
-| **Generalization** | 20 pts | Unseen Catchment Performance Retention (Test B) & Regional Disparity Penalties |
-| **Calibration & Uncertainty**| 15 pts | Continuous Ranked Probability Score (CRPS), 90% Interval Coverage Error, PIT |
-| **Robustness** | 10 pts | Resistance to Paired Input Corruptions (Noise, Missingness, Bias Shifts) |
-| **Efficiency** | 5 pts | Inference Latency per Sample (<50 ms target) and Peak RAM (<4 GB target) |
+### Six Deterministic Evaluation Dimensions (100 Points Total)
+
+| Dimension | Weight | Primary Metric Formulation | Test Split |
+| :--- | :---: | :--- | :--- |
+| **Forecast Skill** | 35 pts | Persistence-relative Kling-Gupta Efficiency (KGE) | Test A (Temporal Holdout) |
+| **Event Detection** | 20 pts | Precision-Recall AUC for Q95 and Q99 Flood Peaks | Test A (Temporal Holdout) |
+| **Generalization** | 15 pts | KGE Retention on Ungauged, Unseen River Basins | Test B (Spatial Holdout) |
+| **Calibration & Uncertainty** | 15 pts | Continuous Ranked Probability Score (CRPS) & Coverage Error | Test A (Probabilistic) |
+| **Robustness** | 10 pts | Relative Performance Degradation under Sensor Noise & Loss | Test C (Input Perturbations) |
+| **Efficiency** | 5 pts | Wall-Clock Latency per Prediction & Peak RAM Usage | Real-Time Hardware Telemetry |
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Architectural Features
 
-- **Public Participant Portal:** Streamlined 3-field registration form (`team_name`, `repository_url`, `deployed_website_url`) with server-side HEAD commit SHA capture and SSRF protection.
-- **Dynamic Repository Discovery (Phase 5A):** Language-agnostic, layout-agnostic AST inspection discovering manifests, dependency trees, and inference entrypoints without running participant code or assuming fixed filenames.
-- **Standardized Hydrological Inference Contract:** Formalized CLI file-in / file-out (`--input <path> --output <path>`) and Python adapter specifications for heterogeneous ML architectures.
-- **Participant Status Tracking:** Real-time lookup using cryptographically unpredictable submission tokens (`sub_...`). Private organizer notes and emails are strictly shielded.
-- **Private Organizer Console:** Protected by token-based authentication (`@require_organizer_auth`), allowing organizers to inspect website reachability, captured commit SHAs, record internal review notes, accept/reject submissions, and trigger evaluations.
-- **Fail-Closed Security Gating:** Untrusted participant code execution is strictly restricted to airgapped containers (`--network none`). If Docker is offline, execution fails closed and holds submissions safely without data loss.
-- **Zero-Leakage Benchmark Architecture:** Multi-split management (Train, Validation, Test A, Test B, Test C) with automatic leakage audits verifying spatial and temporal isolation between training and holdout catchments.
-- **Deterministic Offline Scoring:** Zero LLM or external web API calls in the scoring pipeline. 100% reproducible metric computations bounded in $[0, 100]$.
+1. **Strict 2-Field Participant Intake**: Fast registration via `team_name` and `repository_url`. The server discovers default branches and securely locks the immutable 40-character HEAD commit SHA. Zero participant code executes at intake.
+2. **Dynamic Repository Discovery**: AST inspection identifying model entry points, argument patterns, and dependency configurations without enforcing fixed filenames (`predict.py`, `model.py`, or custom layouts).
+3. **Airgapped Container Sandbox**: Docker isolation running under an unprivileged user (`UID 10001:10001`), `--network none`, read-only root filesystem, dropped capabilities, and strict cgroups CPU/memory caps.
+4. **Durable Asynchronous Job Queue**: Database-backed priority queue supporting atomic claims, worker leases, periodic heartbeats, dead-letter transitions, and automatic stale lease recovery.
+5. **Dual Database Engine**: Native support for **Neon Serverless PostgreSQL** and local SQLite with WAL mode.
+6. **Zero-Leakage Benchmark Architecture**: Strict temporal and geographical isolation with complete hidden label shielding.
+7. **Participant Reference SDK**: Reference model, sample input/output datasets, and a local validation CLI (`scripts/validate_submission.py`).
 
 ---
 
 ## 💻 Quickstart
 
-### 1. Start Application Server & Dashboard
+### 1. Local Setup
 ```bash
+# Clone the repository
+git clone https://github.com/DIVYANK-BHARDWAJ/HYDRAFORGE.git
+cd HYDRAFORGE
+
+# Install Python dependencies
+pip install -r requirements.txt psycopg2-binary
+
+# Start backend server
 python -m hydraforge.cli.main serve --host 127.0.0.1 --port 5000
 ```
-Open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in any browser.
 
-### 2. Participant Workflow
-1. Navigate to **Challenge Portal** to review challenge objectives and evaluation dimensions.
-2. Open **Register & Submit** to fill out the 4-section registration form:
-   - Section A: Team Details (Leader, Contact Email, Members)
-   - Section B: Project Details (Model Architecture, GitHub URL, Commit SHA)
-   - Section C: Dataset Disclosures (Training Data, Sources, Licenses, Pretraining, Covariates)
-   - Section D: Mandatory Declarations
-3. Receive unique **Submission ID** (e.g. `sub_63be1ec38c154c70...`).
-4. Monitor verification and review progress anytime in **Track Submission**.
+### 2. Frontend Dashboard
+```bash
+cd frontend
+npm install
+npm run build    # Or npm run dev for live development
+```
 
-### 3. Organizer Workflow
-1. Click **Organizer Console 🔒** in the top navigation bar.
-2. Authenticate using organizer credentials:
-   - Default Username: `organizer`
-   - Default Password: `basinshift2026organizer` (configurable via `HYDRAFORGE_ORGANIZER_PASS`)
-3. Inspect submitted projects, review complete dataset provenance and licenses.
-4. Record internal private notes and mark submission as **Accepted** or **Rejected**.
-5. Click **Evaluate** to trigger automated container evaluation. If Docker is offline, the submission is held safely in `EVALUATION PENDING — SAFE EXECUTION WORKER UNAVAILABLE`.
+### 3. Run Production Stack with Docker Compose
+```bash
+# Production stack with API, Worker Daemon, and Frontend
+docker compose -f docker-compose.prod.yml up -d --build
+```
 
 ---
 
 ## 🧪 Testing & Verification
 
-Run the entire regression test suite (109 tests covering Phases 1–5A):
+Run the comprehensive test suite (165+ tests):
 ```bash
+# Run all tests
 python -m pytest tests/ -v
-```
 
-Execute the automated end-to-end workflow verification script:
-```bash
-python scripts/verify_workflow.py
+# Run the 10-Scenario Competition Simulation
+python -m pytest tests/test_competition_simulation.py -v
+
+# Validate a participant predictions file
+python scripts/validate_submission.py examples/sample_predictions_valid.json
 ```
 
 ---
 
-## 📁 Repository Structure
+## 📚 Documentation Suite
 
-```
-hydraforge/
-├── api/
-│   ├── auth.py                 # Organizer session token & header authentication guards
-│   ├── routes/                 # REST API blueprints (submissions, organizer, health, etc.)
-│   ├── services/               # Submission, evaluation, leaderboard, and benchmark services
-│   ├── web/index.html          # Self-contained offline Public Portal & Organizer SPA
-│   └── main.py                 # Flask REST application factory
-├── benchmark/                  # Benchmark loader, split manager, and synthetic generator
-├── database/                   # SQLite WAL connection manager, migrations, and repository
-├── discovery/                  # Dynamic repository inspector, AST classifier, and inference contract
-│   ├── contract.py             # Standardized Hydrological Inference Contract
-│   ├── discovery_models.py     # Discovery reports, candidate entrypoints, and enum statuses
-│   ├── discovery_report.py     # Markdown & JSON report formatting helpers
-│   ├── documentation_parser.py # Safe README & docs command extraction & threat detection
-│   ├── entrypoint_discovery.py # AST-based inference vs. training command discovery
-│   ├── file_classifier.py      # Resource-bounded filesystem scanner & symlink auditor
-│   ├── manifest_detector.py    # Static dependency & manifest parser (requirements, pyproject, setup.py)
-│   └── repository_inspector.py # Master coordinator orchestrating discovery pipeline
-├── metrics/                    # 6-dimensional deterministic scoring functions
-├── runner/                     # Docker container runner and LocalTestRunner
-├── submission/                 # GitHub commit capture, website SSRF verifier, and repo checkout
-frontend/                       # React 18 + TypeScript modern development workspace
-scripts/
-└── verify_workflow.py          # Automated end-to-end workflow verification
-tests/                          # 109 unit and integration tests (20 dedicated to discovery)
-docs/                           # Architecture, audit reports, and security specifications
-```
-
+Complete technical and operational documentation is located in [`docs/`](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/):
+- [Final Codebase Audit](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/FINAL_CODEBASE_AUDIT.md)
+- [System Architecture](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/FINAL_ARCHITECTURE.md)
+- [REST API Reference](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/FINAL_API_REFERENCE.md)
+- [Participant Guide](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/PARTICIPANT_GUIDE.md)
+- [Organizer Operations Guide](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/ORGANIZER_GUIDE.md)
+- [Standardized Inference Contract](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/INFERENCE_CONTRACT.md)
+- [Scoring Policy & Formulas](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/SCORING_POLICY.md)
+- [Scoring Validation Report](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/SCORING_VALIDATION_REPORT.md)
+- [Data Provenance & Caravan Staging Report](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/DATA_PROVENANCE_REPORT.md)
+- [Security Threat Model](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/SECURITY_THREAT_MODEL.md)
+- [Sandbox Security Assessment](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/SANDBOX_SECURITY_ASSESSMENT.md)
+- [Production Deployment Guide](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/DEPLOYMENT_GUIDE.md)
+- [Operations & Incident Runbook](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/OPERATIONS_RUNBOOK.md)
+- [Backup & Disaster Recovery Plan](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/BACKUP_AND_RECOVERY.md)
+- [End-to-End Acceptance Report](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/END_TO_END_ACCEPTANCE_REPORT.md)
+- [Final Master Completion Report](file:///c:/Users/DIVYANK%20BHARDWAJ/Desktop/Projects/HYDRAFORGE/HYDRAFORGE/docs/FINAL_COMPLETION_REPORT.md)
