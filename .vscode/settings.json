@@ -3,7 +3,23 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "eslint.workingDirectories": ["./frontend"],
   "python.defaultInterpreterPath": "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
-  "python.analysis.extraPaths": ["./"],
+  "python.pythonPath": "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "pyrefly.pythonPath": "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "pyrefly.extraPaths": [
+    "./",
+    "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages"
+  ],
+  "python.analysis.extraPaths": [
+    "./",
+    "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages"
+  ],
+  "python.autoComplete.extraPaths": [
+    "./",
+    "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages"
+  ],
   "python.testing.pytestEnabled": true,
-  "python.testing.pytestArgs": ["tests"]
+  "python.testing.pytestArgs": ["tests"],
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none"
+  }
 }
