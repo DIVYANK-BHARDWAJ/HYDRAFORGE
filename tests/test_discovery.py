@@ -57,7 +57,8 @@ def test_1_standard_python_repo(tmp_path):
     assert report.status == DiscoveryStatus.DISCOVERY_SUCCESS
     assert report.interface_status == InterfaceStatus.INTERFACE_IDENTIFIED
     assert report.proposed_interface_mapping is not None
-    assert "main.py" in report.proposed_interface_mapping.executable_target
+    assert report.proposed_interface_mapping.executable_target is not None
+    assert "main.py" in str(report.proposed_interface_mapping.executable_target)
     assert any("numpy" in d for d in report.detected_dependencies)
 
 
@@ -84,7 +85,8 @@ def test_2_nonstandard_filenames(tmp_path):
 
     assert report.status == DiscoveryStatus.DISCOVERY_SUCCESS
     assert report.interface_status == InterfaceStatus.INTERFACE_IDENTIFIED
-    assert "streamflow_synthesizer_v3.py" in report.proposed_interface_mapping.executable_target
+    assert report.proposed_interface_mapping is not None
+    assert "streamflow_synthesizer_v3.py" in str(report.proposed_interface_mapping.executable_target)
 
 
 # -----------------------------------------------------------------------------
@@ -239,9 +241,11 @@ def test_8_separate_training_and_inference_commands(tmp_path):
 
     assert len(report.candidate_training_commands) >= 1
     assert len(report.candidate_inference_commands) >= 1
+    assert report.proposed_interface_mapping is not None
+    target = str(report.proposed_interface_mapping.executable_target or "")
     # Target in proposed mapping must be predict.py, NEVER train.py
-    assert "predict.py" in report.proposed_interface_mapping.executable_target
-    assert "train.py" not in report.proposed_interface_mapping.executable_target
+    assert "predict.py" in target
+    assert "train.py" not in target
 
 
 # -----------------------------------------------------------------------------
@@ -330,7 +334,8 @@ def test_12_misleading_filenames(tmp_path):
     report = inspector.inspect_repository(tmp_path)
 
     assert report.interface_status == InterfaceStatus.INTERFACE_IDENTIFIED
-    assert "pipeline_exec.py" in report.proposed_interface_mapping.executable_target
+    assert report.proposed_interface_mapping is not None
+    assert "pipeline_exec.py" in str(report.proposed_interface_mapping.executable_target)
 
 
 # -----------------------------------------------------------------------------

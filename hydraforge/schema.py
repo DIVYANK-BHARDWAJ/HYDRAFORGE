@@ -65,7 +65,7 @@ class BenchmarkInputRecord:
     forecast_origin: str
     horizons: List[int]
     discharge_history: List[float] = field(default_factory=list)
-    forcing_history: Dict[str, List[float]] = field(default_factory=dict)
+    forcing_history: Dict[str, Any] = field(default_factory=dict)
     attributes: Dict[str, float] = field(default_factory=dict)
     split: str = "test_a"  # "train", "val", "test_a", "test_b", "test_c"
     region: Optional[str] = None

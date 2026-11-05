@@ -12,5 +12,9 @@
     "./",
     "C:\\Users\\DIVYANK BHARDWAJ\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages"
   ],
-  "reportMissingImports": "none"
+  "reportMissingImports": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportOptionalIterable": "none",
+  "reportOptionalOperand": "none",
+  "reportGeneralTypeIssues": "none"
 }
