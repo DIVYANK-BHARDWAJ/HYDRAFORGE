@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: hydraforge/api:1.0.0
+    container_name: hydraforge_api_prod
+    restart: always
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - HYDRAFORGE_SECRET_KEY=${HYDRAFORGE_SECRET_KEY}
+      - HYDRAFORGE_ORGANIZER_USER=${HYDRAFORGE_ORGANIZER_USER}
+      - HYDRAFORGE_ORGANIZER_PASS=${HYDRAFORGE_ORGANIZER_PASS}
+      - HYDRAFORGE_ORGANIZER_KEY=${HYDRAFORGE_ORGANIZER_KEY}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    image: hydraforge/worker:1.0.0
+    container_name: hydraforge_worker_prod
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8192M
+        reservations:
+          cpus: '1.0'
+          memory: 2048M
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - WORKER_CONCURRENCY=2
+      - WORKER_POLL_INTERVAL=2.0
+      - LEASE_TIMEOUT_SECONDS=300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: hydraforge/frontend:1.0.0
+    container_name: hydraforge_frontend_prod
+    restart: always
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    ports:
+      - "80:8080"
+    depends_on:
+      - api

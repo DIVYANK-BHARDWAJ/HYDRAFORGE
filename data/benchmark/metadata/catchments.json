@@ -1,0 +1,44 @@
+{
+  "BASIN_SYN_01": {
+    "region": "Alps",
+    "area_km2": 120.0,
+    "elevation_m": 450.0,
+    "q95_threshold": 72.12,
+    "q99_threshold": 87.09
+  },
+  "BASIN_SYN_02": {
+    "region": "Alps",
+    "area_km2": 350.0,
+    "elevation_m": 780.0,
+    "q95_threshold": 155.94,
+    "q99_threshold": 189.71
+  },
+  "BASIN_SYN_03": {
+    "region": "Rockies",
+    "area_km2": 850.0,
+    "elevation_m": 1200.0,
+    "q95_threshold": 407.25,
+    "q99_threshold": 481.71
+  },
+  "BASIN_SYN_04": {
+    "region": "Rockies",
+    "area_km2": 1400.0,
+    "elevation_m": 310.0,
+    "q95_threshold": 702.57,
+    "q99_threshold": 889.86
+  },
+  "BASIN_SYN_05_UNSEEN": {
+    "region": "Alps",
+    "area_km2": 220.0,
+    "elevation_m": 620.0,
+    "q95_threshold": 72.12,
+    "q99_threshold": 87.09
+  },
+  "BASIN_SYN_06_UNSEEN": {
+    "region": "Rockies",
+    "area_km2": 950.0,
+    "elevation_m": 1100.0,
+    "q95_threshold": 407.25,
+    "q99_threshold": 481.71
+  }
+}

@@ -1,0 +1,42 @@
+# HYDRAFORGE Production Evaluation Worker Daemon Dockerfile
+FROM python:3.11-slim AS builder
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt psycopg2-binary
+
+FROM python:3.11-slim AS runner
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    git \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create unprivileged non-root service user
+RUN groupadd -g 10001 appgroup && \
+    useradd -u 10001 -g appgroup -s /bin/bash -m appuser
+
+COPY --from=builder /root/.local /home/appuser/.local
+ENV PATH=/home/appuser/.local/bin:$PATH
+ENV PYTHONPATH=/app:$PYTHONPATH
+ENV PYTHONUNBUFFERED=1
+
+COPY hydraforge/ /app/hydraforge/
+COPY scripts/ /app/scripts/
+COPY data/ /app/data/
+
+RUN chown -R appuser:appgroup /app
+
+USER 10001:10001
+
+CMD ["python", "-m", "hydraforge.worker.worker_service"]

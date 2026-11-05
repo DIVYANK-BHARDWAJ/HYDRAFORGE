@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-11-04T17:55:43.334196",
+  "is_leakage_free": true,
+  "train_catchments": [
+    "BASIN_SYN_01",
+    "BASIN_SYN_02",
+    "BASIN_SYN_03",
+    "BASIN_SYN_04"
+  ],
+  "test_b_catchments": [
+    "BASIN_SYN_05_UNSEEN",
+    "BASIN_SYN_06_UNSEEN"
+  ],
+  "catchment_overlap_count": 0,
+  "temporal_leakage_detected": false,
+  "overlapping_target_windows": 0,
+  "corrupted_cases_paired_correctly": true,
+  "unpaired_corrupted_cases": 0,
+  "details": {
+    "train_case_count": 40,
+    "val_case_count": 20,
+    "test_a_case_count": 40,
+    "test_b_case_count": 20,
+    "test_c_case_count": 30
+  },
+  "warnings": []
+}

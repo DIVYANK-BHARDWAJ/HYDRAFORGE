@@ -1,0 +1,115 @@
+{
+  "metadata_notice": "SYNTHETIC \u2014 FOR SOFTWARE INTEGRATION TESTING ONLY",
+  "calculation_method": "historical_training_empirical_percentile",
+  "reference_period": "2025-01-01 to 2025-06-30",
+  "catchments": {
+    "BASIN_SYN_01": {
+      "q95": {
+        "catchment_id": "BASIN_SYN_01",
+        "percentile": 95.0,
+        "threshold_value": 72.12,
+        "units": "m3/s",
+        "source_split": "train",
+        "source_start_date": "2025-01-01",
+        "source_end_date": "2025-06-30",
+        "sample_count": 180,
+        "calculation_method": "empirical_quantile_weibull",
+        "is_provisional": true,
+        "notes": "Synthetic threshold from baseline BASIN_SYN_01"
+      },
+      "q99_threshold_value": 87.09,
+      "region": "Alps",
+      "area_km2": 120.0
+    },
+    "BASIN_SYN_02": {
+      "q95": {
+        "catchment_id": "BASIN_SYN_02",
+        "percentile": 95.0,
+        "threshold_value": 155.94,
+        "units": "m3/s",
+        "source_split": "train",
+        "source_start_date": "2025-01-01",
+        "source_end_date": "2025-06-30",
+        "sample_count": 180,
+        "calculation_method": "empirical_quantile_weibull",
+        "is_provisional": true,
+        "notes": "Synthetic threshold from baseline BASIN_SYN_02"
+      },
+      "q99_threshold_value": 189.71,
+      "region": "Alps",
+      "area_km2": 350.0
+    },
+    "BASIN_SYN_03": {
+      "q95": {
+        "catchment_id": "BASIN_SYN_03",
+        "percentile": 95.0,
+        "threshold_value": 407.25,
+        "units": "m3/s",
+        "source_split": "train",
+        "source_start_date": "2025-01-01",
+        "source_end_date": "2025-06-30",
+        "sample_count": 180,
+        "calculation_method": "empirical_quantile_weibull",
+        "is_provisional": true,
+        "notes": "Synthetic threshold from baseline BASIN_SYN_03"
+      },
+      "q99_threshold_value": 481.71,
+      "region": "Rockies",
+      "area_km2": 850.0
+    },
+    "BASIN_SYN_04": {
+      "q95": {
+        "catchment_id": "BASIN_SYN_04",
+        "percentile": 95.0,
+        "threshold_value": 702.57,
+        "units": "m3/s",
+        "source_split": "train",
+        "source_start_date": "2025-01-01",
+        "source_end_date": "2025-06-30",
+        "sample_count": 180,
+        "calculation_method": "empirical_quantile_weibull",
+        "is_provisional": true,
+        "notes": "Synthetic threshold from baseline BASIN_SYN_04"
+      },
+      "q99_threshold_value": 889.86,
+      "region": "Rockies",
+      "area_km2": 1400.0
+    },
+    "BASIN_SYN_05_UNSEEN": {
+      "q95": {
+        "catchment_id": "BASIN_SYN_05_UNSEEN",
+        "percentile": 95.0,
+        "threshold_value": 72.12,
+        "units": "m3/s",
+        "source_split": "train",
+        "source_start_date": "2025-01-01",
+        "source_end_date": "2025-06-30",
+        "sample_count": 180,
+        "calculation_method": "empirical_quantile_weibull",
+        "is_provisional": true,
+        "notes": "Synthetic threshold from baseline BASIN_SYN_05_UNSEEN"
+      },
+      "q99_threshold_value": 87.09,
+      "region": "Alps",
+      "area_km2": 220.0
+    },
+    "BASIN_SYN_06_UNSEEN": {
+      "q95": {
+        "catchment_id": "BASIN_SYN_06_UNSEEN",
+        "percentile": 95.0,
+        "threshold_value": 407.25,
+        "units": "m3/s",
+        "source_split": "train",
+        "source_start_date": "2025-01-01",
+        "source_end_date": "2025-06-30",
+        "sample_count": 180,
+        "calculation_method": "empirical_quantile_weibull",
+        "is_provisional": true,
+        "notes": "Synthetic threshold from baseline BASIN_SYN_06_UNSEEN"
+      },
+      "q99_threshold_value": 481.71,
+      "region": "Rockies",
+      "area_km2": 950.0
+    }
+  }
+}

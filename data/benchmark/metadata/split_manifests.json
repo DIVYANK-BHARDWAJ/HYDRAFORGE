@@ -1,0 +1,67 @@
+{
+  "train": {
+    "split_name": "train",
+    "case_count": 40,
+    "catchment_count": 4,
+    "catchment_ids": [
+      "BASIN_SYN_01",
+      "BASIN_SYN_02",
+      "BASIN_SYN_03",
+      "BASIN_SYN_04"
+    ],
+    "input_records_hash": "a31511537ece3077f0606c842970227f76fb0c983cc19f6a1a59cc1c290ce24b",
+    "label_records_hash": "a2590b80812d9776cc3b7c1bf8949c377e5344db5d0f57e6128a3c7a15e4f3ac",
+    "created_at": "2026-11-04T17:55:43.293411+00:00"
+  },
+  "validation": {
+    "split_name": "validation",
+    "case_count": 20,
+    "catchment_count": 4,
+    "catchment_ids": [
+      "BASIN_SYN_01",
+      "BASIN_SYN_02",
+      "BASIN_SYN_03",
+      "BASIN_SYN_04"
+    ],
+    "input_records_hash": "0b85d7c2815672e3e9d51c03433356c882b28e06839acae8126ceee1f2ad08a4",
+    "label_records_hash": "8f97b81e95eeef3fe586d21db868273eece97df8f354f1922c1711f717b9af23",
+    "created_at": "2026-11-04T17:55:43.296414+00:00"
+  },
+  "test_a": {
+    "split_name": "test_a",
+    "case_count": 40,
+    "catchment_count": 4,
+    "catchment_ids": [
+      "BASIN_SYN_01",
+      "BASIN_SYN_02",
+      "BASIN_SYN_03",
+      "BASIN_SYN_04"
+    ],
+    "input_records_hash": "a88162a9d941d7e24b1b83967fad597232158a45886efac317f8fc66b13b0a99",
+    "label_records_hash": "be264259ec17eabce6bb7d76964128c2150dc708a8ac90b6ff488f8060e26ccf",
+    "created_at": "2026-11-04T17:55:43.309968+00:00"
+  },
+  "test_b": {
+    "split_name": "test_b",
+    "case_count": 20,
+    "catchment_count": 2,
+    "catchment_ids": [
+      "BASIN_SYN_05_UNSEEN",
+      "BASIN_SYN_06_UNSEEN"
+    ],
+    "input_records_hash": "26d3a3d7fcbf8f5d8f7338c320f6ee6eef531eff6993d48895ea664dbb5ba06c",
+    "label_records_hash": "2c7e64e540e5c710b4e9f78083935984312eb1a81023e1a50bcd557e326eb838",
+    "created_at": "2026-11-04T17:55:43.316819+00:00"
+  },
+  "test_c": {
+    "split_name": "test_c",
+    "case_count": 30,
+    "catchment_count": 1,
+    "catchment_ids": [
+      "BASIN_SYN_01"
+    ],
+    "input_records_hash": "152cb54cf8cd307771759de4ee1e400d52a6476670c02d9117ae964e64038206",
+    "label_records_hash": "f10c960a20b2e0881d686849db57930c73d34857ec77c91871e1eebfb31fc876",
+    "created_at": "2026-11-04T17:55:43.330332+00:00"
+  }
+}

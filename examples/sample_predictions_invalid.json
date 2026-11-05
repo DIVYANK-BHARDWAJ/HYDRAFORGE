@@ -1,0 +1,38 @@
+{
+  "contract_version": "1.0.0",
+  "predictions": [
+    {
+      "forecast_timestamp": "2024-01-08T00:00:00Z",
+      "lead_day": 1,
+      "predicted_discharge_m3_s": -5.0,
+      "quantile_10": 13.5,
+      "quantile_50": 16.2,
+      "quantile_90": 20.1,
+      "prob_exceed_q95": 0.05,
+      "prob_exceed_q99": 0.01,
+      "_comment": "INVALID: negative discharge (-5.0)"
+    },
+    {
+      "forecast_timestamp": "2024-01-09T00:00:00Z",
+      "lead_day": 2,
+      "predicted_discharge_m3_s": 24.8,
+      "quantile_10": 35.0,
+      "quantile_50": 24.8,
+      "quantile_90": 10.0,
+      "prob_exceed_q95": 0.22,
+      "prob_exceed_q99": 0.04,
+      "_comment": "INVALID: inverted quantiles (q10 > q50 > q90)"
+    },
+    {
+      "forecast_timestamp": "2024-01-10T00:00:00Z",
+      "lead_day": 3,
+      "predicted_discharge_m3_s": 45.1,
+      "quantile_10": 34.0,
+      "quantile_50": 45.1,
+      "quantile_90": 61.3,
+      "prob_exceed_q95": 1.45,
+      "prob_exceed_q99": 0.35,
+      "_comment": "INVALID: probability exceeds 1.0 (1.45)"
+    }
+  ]
+}

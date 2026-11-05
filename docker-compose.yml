@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: hydraforge/api:latest
+    container_name: hydraforge_api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://neondb_owner:npg_x5dXuDFNvaW8@ep-misty-art-ao1lof4u-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require}
+      - HYDRAFORGE_SECRET_KEY=${HYDRAFORGE_SECRET_KEY:-production-hydraforge-secret-key-basinshift-2026}
+      - HYDRAFORGE_ORGANIZER_USER=${HYDRAFORGE_ORGANIZER_USER:-organizer}
+      - HYDRAFORGE_ORGANIZER_PASS=${HYDRAFORGE_ORGANIZER_PASS:-basinshift2026organizer}
+      - HYDRAFORGE_ORGANIZER_KEY=${HYDRAFORGE_ORGANIZER_KEY:-organizer_master_key_hydraforge_basinshift_2026}
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    image: hydraforge/worker:latest
+    container_name: hydraforge_worker
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://neondb_owner:npg_x5dXuDFNvaW8@ep-misty-art-ao1lof4u-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require}
+      - WORKER_CONCURRENCY=2
+      - WORKER_POLL_INTERVAL=2.0
+      - LEASE_TIMEOUT_SECONDS=300
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: hydraforge/frontend:latest
+    container_name: hydraforge_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api

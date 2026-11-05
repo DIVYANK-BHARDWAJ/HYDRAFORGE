@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HYDRAFORGE — Public Participant Portal & Organizer Console</title>
+  <style>
+    :root {
+      --bg-navy: #060A12;
+      --surface-dark: #0B1220;
+      --surface-card: #101B30;
+      --surface-card-hover: #152442;
+      --border-subtle: #1E2D4A;
+      --border-focus: #00E5FF;
+      --cyan-accent: #00E5FF;
+      --cyan-glow: rgba(0, 229, 255, 0.25);
+      --blue-accent: #2563EB;
+      --blue-light: #60A5FA;
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-faint: #64748B;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background: var(--bg-navy); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; line-height: 1.5; }
+    
+    /* Top Header */
+    header { background: var(--surface-dark); border-bottom: 1px solid var(--border-subtle); padding: 0.85rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); }
+    .brand { display: flex; align-items: center; gap: 0.85rem; cursor: pointer; }
+    .brand-logo { width: 38px; height: 38px; background: linear-gradient(135deg, var(--cyan-accent), var(--blue-accent)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #060A12; font-size: 1.2rem; box-shadow: 0 0 15px var(--cyan-glow); }
+    .brand-title { font-size: 1.25rem; font-weight: 800; letter-spacing: 0.04em; color: var(--text-main); }
+    .brand-subtitle { font-size: 0.72rem; color: var(--cyan-accent); letter-spacing: 0.12em; text-transform: uppercase; font-family: monospace; }
+    
+    .nav-tabs { display: flex; gap: 0.4rem; align-items: center; }
+    .nav-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: all 0.2s; }
+    .nav-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.04); }
+    .nav-btn.active { color: var(--cyan-accent); background: var(--surface-card); border-bottom: 2px solid var(--cyan-accent); }
+    .nav-organizer-btn { border: 1px solid var(--border-subtle); color: var(--blue-light); }
+    .nav-organizer-btn.active { border-color: var(--blue-accent); color: var(--cyan-accent); }
+
+    .header-badge { font-size: 0.75rem; font-family: monospace; padding: 0.3rem 0.75rem; border-radius: 9999px; background: #0B1324; border: 1px solid var(--border-subtle); color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+    .dot-online { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .dot-locked { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+
+    /* Main Container */
+    main { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* Hero Section */
+    .hero-banner { background: linear-gradient(135deg, rgba(16, 27, 48, 0.95), rgba(6, 10, 18, 0.95)), radial-gradient(circle at top right, rgba(0, 229, 255, 0.15), transparent 70%); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 3rem 2.5rem; margin-bottom: 2.5rem; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 9999px; background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.3); color: var(--cyan-accent); font-size: 0.75rem; font-family: monospace; font-weight: 600; text-transform: uppercase; margin-bottom: 1.25rem; }
+    .hero-title { font-size: 2.5rem; font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1rem; color: #fff; max-width: 900px; }
+    .hero-title span { background: linear-gradient(135deg, var(--cyan-accent), var(--blue-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-desc { font-size: 1.05rem; color: var(--text-muted); max-width: 820px; margin-bottom: 2rem; line-height: 1.6; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+    /* Grid & Cards */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+
+    .card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; transition: border-color 0.2s, transform 0.2s; }
+    .card:hover { border-color: rgba(0, 229, 255, 0.4); }
+    .card-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+    .card-score { font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--cyan-accent); }
+
+    /* Forms */
+    .form-panel { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 2rem; margin-bottom: 2rem; max-width: 880px; margin-left: auto; margin-right: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .form-section-header { margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-subtle); }
+    .form-section-title { font-size: 1.15rem; font-weight: 700; color: var(--cyan-accent); display: flex; align-items: center; gap: 0.5rem; }
+    .form-section-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; margin-bottom: 0.4rem; font-size: 0.84rem; color: var(--text-main); font-weight: 600; }
+    label span.req { color: #F87171; margin-left: 2px; }
+    input[type="text"], input[type="email"], input[type="password"], textarea, select { width: 100%; background: var(--surface-dark); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.92rem; transition: border-color 0.2s; }
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus, select:focus { outline: none; border-color: var(--cyan-accent); box-shadow: 0 0 10px var(--cyan-glow); }
+    textarea { min-height: 90px; resize: vertical; }
+    .form-help { font-size: 0.75rem; color: var(--text-faint); margin-top: 0.3rem; font-family: monospace; }
+    
+    .checkbox-group { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem; padding: 0.75rem 1rem; background: var(--surface-dark); border: 1px solid var(--border-subtle); border-radius: 8px; }
+    .checkbox-group input[type="checkbox"] { margin-top: 0.2rem; width: 16px; height: 16px; cursor: pointer; accent-color: var(--cyan-accent); }
+    .checkbox-group label { margin-bottom: 0; font-size: 0.85rem; color: var(--text-main); font-weight: 500; cursor: pointer; }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--cyan-accent), var(--blue-accent)); color: #060A12; box-shadow: 0 4px 15px var(--cyan-glow); }
+    .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-secondary { background: var(--surface-dark); border: 1px solid var(--border-subtle); color: var(--text-main); }
+    .btn-secondary:hover { background: var(--border-subtle); color: #fff; }
+    .btn-success { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--success); color: #34D399; }
+    .btn-success:hover { background: var(--success); color: #060A12; }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); border: 1px solid var(--danger); color: #FCA5A5; }
+    .btn-danger:hover { background: var(--danger); color: #060A12; }
+    .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.8rem; border-radius: 6px; }
+
+    /* Tables */
+    .table-container { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 12px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    th { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); font-weight: 600; font-family: monospace; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(0,0,0,0.2); }
+    td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-main); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* Badges */
+    .badge { padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; font-family: monospace; display: inline-block; }
+    .badge-cyan { background: rgba(0, 229, 255, 0.15); color: var(--cyan-accent); border: 1px solid rgba(0, 229, 255, 0.3); }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-blue { background: rgba(37, 99, 235, 0.15); color: var(--blue-light); border: 1px solid rgba(37, 99, 235, 0.3); }
+
+    /* Modals */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1.5rem; backdrop-filter: blur(5px); }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 2rem; max-width: 750px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+
+    /* Footer */
+    footer { background: var(--surface-dark); border-top: 1px solid var(--border-subtle); padding: 1.25rem 2rem; font-size: 0.8rem; color: var(--text-faint); display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand" onclick="switchTab('landing')">
+      <div class="brand-logo">HF</div>
+      <div>
+        <div class="brand-title">HYDRAFORGE</div>
+        <div class="brand-subtitle">BASINSHIFT Hydrological Challenge</div>
+      </div>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="nav-btn active" id="btn-landing" onclick="switchTab('landing')">Challenge Portal</button>
+      <button class="nav-btn" id="btn-submit" onclick="switchTab('submit')">Register & Submit</button>
+      <button class="nav-btn" id="btn-status" onclick="switchTab('status')">Track Submission</button>
+      <button class="nav-btn" id="btn-leaderboard" onclick="switchTab('leaderboard')">Leaderboard</button>
+      <button class="nav-btn" id="btn-benchmark" onclick="switchTab('benchmark')">Benchmark Suite</button>
+      <button class="nav-btn nav-organizer-btn" id="btn-organizer" onclick="switchTab('organizer')">Organizer Console 🔒</button>
+    </nav>
+
+    <div class="header-badge" id="header-status-badge">
+      <div class="dot-online" id="daemon-indicator"></div>
+      <span id="daemon-text">System Active</span>
+    </div>
+  </header>
+
+  <!-- Main Views Container -->
+  <main>
+
+    <!-- ========================================================================= -->
+    <!-- 1. PUBLIC PARTICIPANT LANDING PAGE                                        -->
+    <!-- ========================================================================= -->
+    <section id="tab-landing" class="page-section active">
+      <div class="hero-banner">
+        <div class="hero-badge">BASINSHIFT 2026 • Machine Learning for Hydrology</div>
+        <h1 class="hero-title">
+          Train anywhere. Predict anywhere. <span>Prove your model.</span>
+        </h1>
+        <p class="hero-desc">
+          BASINSHIFT is an automated scientific benchmark evaluating river-discharge forecasting models,
+          uncertainty calibration, and unseen-catchment generalization under real-world distribution shift.
+          Participants may train using any scientifically valid, legally permissible dataset.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="switchTab('submit')">Submit Your Project →</button>
+          <button class="btn btn-secondary" onclick="scrollToSection('requirements-section')">Submission Guidelines</button>
+          <button class="btn btn-secondary" onclick="switchTab('status')">Track Your Submission</button>
+        </div>
+      </div>
+
+      <!-- Challenge Overview -->
+      <div class="card" style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.35rem; color: #fff; margin-bottom: 0.75rem;">Challenge Overview</h2>
+        <p class="card-text" style="font-size: 0.95rem; margin-bottom: 1rem;">
+          Accurate river-discharge prediction is essential for early flood warning, reservoir operation, and water resource management.
+          Standard machine learning models often degrade catastrophically when transferred to ungauged river basins or exposed to extreme meteorological shifts.
+        </p>
+        <p class="card-text" style="font-size: 0.95rem;">
+          HYDRAFORGE evaluates submitted GitHub repositories containing trained models or forecasting agents against organizer-controlled,
+          unseen benchmark catchments and hidden ground-truth labels. The scoring engine evaluates your architecture across six distinct deterministic dimensions.
+        </p>
+      </div>
+
+      <!-- 6 Evaluation Dimensions -->
+      <h2 style="font-size: 1.35rem; color: #fff; margin-bottom: 0.5rem;">Evaluation Dimensions</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        * Weights are provisional until organizer ratification. Composite score is bounded in [0, 100].
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">
+            <span>1. Forecast Skill</span>
+            <span class="card-score">25 pts</span>
+          </div>
+          <p class="card-text">
+            Continuous discharge accuracy evaluated via Nash-Sutcliffe Efficiency (NSE), MAE, and RMSE against a persistence baseline.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>2. Event Detection</span>
+            <span class="card-score">25 pts</span>
+          </div>
+          <p class="card-text">
+            Skill in detecting Q95 high-flow and Q99 extreme flood peaks using prevalence-normalized AUPRC, Brier Skill Score, and CSI.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>3. Generalization</span>
+            <span class="card-score">20 pts</span>
+          </div>
+          <p class="card-text">
+            Performance retention on completely unseen, out-of-distribution catchments (Test B) with penalties for cross-regional disparity.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>4. Calibration</span>
+            <span class="card-score">15 pts</span>
+          </div>
+          <p class="card-text">
+            Probabilistic interval validity: 90% prediction interval coverage error, sharpness, CRPS, and PIT histogram uniformity.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>5. Robustness</span>
+            <span class="card-score">10 pts</span>
+          </div>
+          <p class="card-text">
+            Resilience to paired adversarial corruptions: Gaussian sensor noise, historical data missingness, and sensor bias shifts.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>6. Efficiency</span>
+            <span class="card-score">5 pts</span>
+          </div>
+          <p class="card-text">
+            Inference computational footprint: latency per prediction step (&lt;50 ms target) and peak resident container RAM (&lt;4 GB).
+          </p>
+        </div>
+      </div>
+
+      <!-- Submission Requirements -->
+      <div class="card" id="requirements-section" style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.35rem; color: #fff; margin-bottom: 1rem;">Submission Requirements & Rules</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          <div>
+            <h4 style="color: var(--cyan-accent); margin-bottom: 0.5rem; font-size: 0.95rem;">Repository & Code Format</h4>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); list-style: disc; padding-left: 1.2rem; line-height: 1.6;">
+              <li>Public GitHub or GitLab repository.</li>
+              <li>Immutable 40-character commit SHA (mutable branch references rejected).</li>
+              <li>Must contain a compliant <code>submission_manifest.json</code>.</li>
+              <li>Executable entrypoint script outputting valid JSON predictions.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: var(--cyan-accent); margin-bottom: 0.5rem; font-size: 0.95rem;">Dataset & License Disclosure</h4>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); list-style: disc; padding-left: 1.2rem; line-height: 1.6;">
+              <li>Open training data policy (no closed whitelist).</li>
+              <li>Full disclosure of dataset sources, licenses, and preprocessing.</li>
+              <li>Pretrained weights and supplementary data must be declared.</li>
+              <li>Inference-time data must not contain future ground-truth targets.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: var(--cyan-accent); margin-bottom: 0.5rem; font-size: 0.95rem;">Challenge Logistics</h4>
+            <ul style="font-size: 0.88rem; color: var(--text-muted); list-style: disc; padding-left: 1.2rem; line-height: 1.6;">
+              <li><strong>Submission Deadline:</strong> To be announced.</li>
+              <li><strong>Prize Pool & Awards:</strong> To be announced.</li>
+              <li><strong>Team Size Limits:</strong> To be announced.</li>
+              <li><strong>Evaluation Engine:</strong> HYDRAFORGE v1.0.0.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 2. PUBLIC TEAM SUBMISSION FORM                                            -->
+    <!-- ========================================================================= -->
+    <section id="tab-submit" class="page-section">
+      <div class="form-panel" style="max-width: 680px; margin: 0 auto;">
+        <h2 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.5rem;">Fast Participant Registration</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Register your team and submit your GitHub forecasting project. Submission takes under one minute.
+          Our evaluation engine automatically resolves and anchors your repository's default branch and current HEAD commit.
+        </p>
+
+        <form id="submission-form" onsubmit="handleParticipantSubmit(event)">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label>1. Team Name <span class="req">*</span></label>
+            <input type="text" id="sub-team-name" required placeholder="e.g. RiverWatchers Lab">
+            <div class="form-help">The official public team or organization name displayed on the leaderboard.</div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label>2. GitHub Repository URL <span class="req">*</span></label>
+            <input type="url" id="sub-repo-url" required placeholder="https://github.com/organization/repository">
+            <div class="form-help">Must be a publicly accessible GitHub repository. We will automatically inspect and lock the current HEAD commit SHA.</div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>3. Deployed Website URL <span class="req">*</span></label>
+            <input type="url" id="sub-website-url" required placeholder="https://my-team-model.example.com">
+            <div class="form-help">Your team's public web application or dashboard demonstrating your hydrological model. Checked for public reachability with strict SSRF protection.</div>
+          </div>
+
+          <div id="submit-alert" style="display: none; margin-top: 1.5rem; padding: 1rem; border-radius: 8px;"></div>
+
+          <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary" id="btn-submit-form" style="padding: 0.85rem 2rem; width: 100%;">
+              Submit Project for BASINSHIFT Review →
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 3. PUBLIC PARTICIPANT STATUS TRACKING                                     -->
+    <!-- ========================================================================= -->
+    <section id="tab-status" class="page-section">
+      <div class="card" style="max-width: 800px; margin: 0 auto 2rem auto;">
+        <h2 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.5rem;">Track Submission Status</h2>
+        <p class="card-text" style="margin-bottom: 1.5rem;">
+          Enter your unique Submission ID received upon registration to check verification status, review decisions, and official scores.
+        </p>
+
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+          <input type="text" id="status-search-id" placeholder="e.g. sub_389ab2f409..." style="font-family: monospace;">
+          <button class="btn btn-primary" onclick="lookupSubmissionStatus()">Lookup</button>
+        </div>
+
+        <div id="status-result" style="display: none; border-top: 1px solid var(--border-subtle); padding-top: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+              <h3 id="stat-project-name" style="font-size: 1.2rem; color: #fff;">—</h3>
+              <p id="stat-team-name" style="font-size: 0.85rem; color: var(--text-muted);">—</p>
+            </div>
+            <div id="stat-overall-badge" class="badge badge-cyan" style="font-size: 0.85rem; padding: 0.35rem 0.85rem;">—</div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 1.25rem;">
+            <div style="background: var(--surface-dark); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">GitHub Verification</div>
+              <div id="stat-verification" style="font-size: 1rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">—</div>
+              <div id="stat-verification-details" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; font-family: monospace;">—</div>
+            </div>
+
+            <div style="background: var(--surface-dark); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Website Availability</div>
+              <div id="stat-website" style="font-size: 1rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">—</div>
+              <div id="stat-website-details" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">—</div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 1.25rem;">
+            <div style="background: var(--surface-dark); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Organizer Review</div>
+              <div id="stat-review" style="font-size: 1rem; font-weight: 700; color: #fff; margin-top: 0.25rem;">—</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Official evaluation clearance</div>
+            </div>
+
+            <div style="background: var(--surface-dark); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Evaluation Status</div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.25rem;">
+                <span id="stat-eval-status" style="font-size: 1rem; font-weight: 700; color: var(--cyan-accent);">—</span>
+                <span id="stat-final-score" style="font-size: 1.3rem; font-weight: 800; font-family: monospace; color: #fff;">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.75rem; color: var(--text-faint); font-family: monospace; line-height: 1.8;">
+            <div>GitHub Repo: <a id="stat-repo-link" href="#" target="_blank" style="color: var(--cyan-accent);"><span id="stat-repo">—</span></a> (Commit: <span id="stat-commit" style="color: #fff;">—</span>)</div>
+            <div>Deployed App: <a id="stat-site-link" href="#" target="_blank" style="color: var(--cyan-accent);"><span id="stat-site">—</span></a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 4. OFFICIAL LEADERBOARD                                                   -->
+    <!-- ========================================================================= -->
+    <section id="tab-leaderboard" class="page-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+          <h2 style="font-size: 1.5rem; color: #fff;">Official Challenge Standings</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Ranked composite scores from completed, verified evaluations</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="loadLeaderboard()">Refresh</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team & Model</th>
+              <th style="text-align: right;">Total Score</th>
+              <th style="text-align: right;">Skill (25)</th>
+              <th style="text-align: right;">Events (25)</th>
+              <th style="text-align: right;">Gen (20)</th>
+              <th style="text-align: right;">Calib (15)</th>
+              <th style="text-align: right;">Rob (10)</th>
+              <th style="text-align: right;">Eff (5)</th>
+              <th style="text-align: right;">Commit</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-tbody">
+            <tr><td colspan="10" style="text-align: center; color: var(--text-faint); padding: 2rem;">Loading leaderboard...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 5. BENCHMARK SUITE & PARTITIONS                                           -->
+    <!-- ========================================================================= -->
+    <section id="tab-benchmark" class="page-section">
+      <h2 style="font-size: 1.5rem; color: #fff; margin-bottom: 0.5rem;">Benchmark Partitions & Leakage Audit</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Organizer-controlled evaluation splits. Hidden labels for test partitions remain physically shielded.
+      </p>
+
+      <div class="grid-4" id="benchmark-kpis">
+        <div class="card"><div class="card-title">Dataset</div><div id="bm-dataset" class="card-score">Loading...</div></div>
+        <div class="card"><div class="card-title">Catchments</div><div id="bm-catchments" class="card-score">Loading...</div></div>
+        <div class="card"><div class="card-title">Horizons</div><div id="bm-horizons" class="card-score">Loading...</div></div>
+        <div class="card"><div class="card-title">Leakage Audit</div><div id="bm-leakage" class="card-score" style="color: var(--success);">Zero Leakage</div></div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Split</th>
+              <th>Description / Purpose</th>
+              <th style="text-align: right;">Cases</th>
+              <th style="text-align: right;">Catchments</th>
+              <th>Condition</th>
+            </tr>
+          </thead>
+          <tbody id="benchmark-splits-tbody">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-faint); padding: 2rem;">Loading partitions...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- 6. PRIVATE ORGANIZER CONSOLE (AUTHENTICATED)                              -->
+    <!-- ========================================================================= -->
+    <section id="tab-organizer" class="page-section">
+      <!-- Organizer Auth Gate -->
+      <div id="organizer-auth-box" class="card" style="max-width: 480px; margin: 3rem auto; text-align: center;">
+        <h2 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Organizer Authentication Required</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Enter your organizer credentials or administrative API key to manage submissions and reviews.
+        </p>
+
+        <form onsubmit="handleOrganizerLogin(event)" style="text-align: left;">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="org-user" value="organizer" required>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="org-pass" placeholder="Enter organizer password" required>
+          </div>
+          <div id="org-login-alert" style="display: none; margin-bottom: 1rem; font-size: 0.8rem; color: #F87171;"></div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Authenticate Session</button>
+        </form>
+      </div>
+
+      <!-- Authenticated Organizer Management View -->
+      <div id="organizer-main-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="font-size: 1.6rem; color: #fff;">Participant Submissions Review Console</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Inspect disclosures, approve/reject submissions, record internal notes, and initiate evaluations.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary btn-sm" onclick="loadOrganizerSubmissions()">Refresh Table</button>
+            <button class="btn btn-danger btn-sm" onclick="organizerLogout()">Logout</button>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+          <select id="org-filter-status" onchange="loadOrganizerSubmissions()" style="width: auto; min-width: 180px;">
+            <option value="">All Review Statuses</option>
+            <option value="UNDER_REVIEW">Under Review</option>
+            <option value="ACCEPTED">Accepted</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+          <input type="text" id="org-search-term" placeholder="Search team, project, or ID..." onkeyup="if(event.key==='Enter') loadOrganizerSubmissions()" style="max-width: 300px;">
+          <button class="btn btn-secondary btn-sm" onclick="loadOrganizerSubmissions()">Filter</button>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID / Time</th>
+                <th>Team Name</th>
+                <th>GitHub Repository</th>
+                <th>Deployed Website</th>
+                <th>Captured Commit</th>
+                <th>Verification</th>
+                <th>Review</th>
+                <th>Evaluation</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="organizer-submissions-tbody">
+              <tr><td colspan="9" style="text-align: center; color: var(--text-faint); padding: 2rem;">Loading submissions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Submission Detail Modal -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;">
+        <h3 id="modal-title" style="font-size: 1.25rem; color: #fff;">Submission Details</h3>
+        <button onclick="closeModal()" class="btn btn-secondary btn-sm">✕ Close</button>
+      </div>
+
+      <div id="modal-body" style="font-size: 0.88rem; line-height: 1.6; space-y: 1rem;">
+        <!-- Dynamic content injected here -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>HYDRAFORGE Evaluation Platform • BASINSHIFT Challenge 2026</div>
+    <div style="font-family: monospace;">Deterministic 6-Axis Metric Engine v1.0.0</div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    let currentAuthToken = localStorage.getItem('hydraforge_organizer_token') || '';
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      const targetBtn = document.getElementById(`btn-${tabId}`);
+      if (targetTab) targetTab.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('active');
+
+      if (tabId === 'leaderboard') loadLeaderboard();
+      if (tabId === 'benchmark') loadBenchmark();
+      if (tabId === 'organizer') initOrganizerView();
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // System Telemetry Check
+    async function checkSystemHealth() {
+      try {
+        const res = await fetch('/api/v1/system');
+        if (res.ok) {
+          const data = await res.json();
+          const dockerOk = data.execution_backends?.docker_daemon_available;
+          const badge = document.getElementById('daemon-indicator');
+          const txt = document.getElementById('daemon-text');
+          if (dockerOk) {
+            badge.className = 'dot-online';
+            txt.textContent = 'Docker Online';
+          } else {
+            badge.className = 'dot-locked';
+            txt.textContent = 'Fail-Closed (Safe Mode)';
+          }
+        }
+      } catch (e) {
+        console.warn('System status poll error:', e);
+      }
+    }
+
+    // 1. Participant Submission Handler (Strict 3-Field Contract)
+    async function handleParticipantSubmit(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById('submit-alert');
+      const submitBtn = document.getElementById('btn-submit-form');
+      alertBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying & Submitting...';
+
+      const payload = {
+        team_name: document.getElementById('sub-team-name').value.trim(),
+        repository_url: document.getElementById('sub-repo-url').value.trim(),
+        deployed_website_url: document.getElementById('sub-website-url').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/v1/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        alertBox.style.display = 'block';
+
+        if (res.ok) {
+          alertBox.style.background = 'rgba(16, 185, 129, 0.15)';
+          alertBox.style.border = '1px solid var(--success)';
+          alertBox.style.color = '#34D399';
+          alertBox.innerHTML = `
+            <strong>Submission Successful!</strong><br>
+            Your unique Submission ID: <code style="font-size: 1.1rem; color: #fff; background: rgba(0,0,0,0.4); padding: 0.2rem 0.5rem; border-radius: 4px;">${data.submission_id}</code><br>
+            <div style="font-size: 0.82rem; color: #E2E8F0; margin-top: 0.5rem;">
+              • Repository: <a href="${data.repository_url}" target="_blank" style="color: var(--cyan-accent);">${data.repository_url}</a><br>
+              • Locked Commit: <code>${data.commit_sha || 'Pending verification'}</code><br>
+              • Deployed Website: <a href="${data.deployed_website_url}" target="_blank" style="color: var(--cyan-accent);">${data.deployed_website_url}</a> (${data.website_status || 'PENDING'})
+            </div>
+            <div style="font-size: 0.8rem; color: #94A3B8; margin-top: 0.5rem;">Use this Submission ID to track review status and evaluation results.</div>
+          `;
+          document.getElementById('submission-form').reset();
+        } else {
+          alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+          alertBox.style.border = '1px solid var(--danger)';
+          alertBox.style.color = '#FCA5A5';
+          alertBox.textContent = `Error: ${data.message || data.error}`;
+        }
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        alertBox.style.border = '1px solid var(--danger)';
+        alertBox.style.color = '#FCA5A5';
+        alertBox.textContent = 'Network or server error while submitting.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Project for BASINSHIFT Review →';
+      }
+    }
+
+    // 2. Participant Status Lookup
+    async function lookupSubmissionStatus() {
+      const id = document.getElementById('status-search-id').value.trim();
+      const resContainer = document.getElementById('status-result');
+      if (!id) return;
+
+      try {
+        const res = await fetch(`/api/v1/submissions/${encodeURIComponent(id)}/status`);
+        if (!res.ok) {
+          alert('Submission ID not found.');
+          resContainer.style.display = 'none';
+          return;
+        }
+
+        const data = await res.json();
+        resContainer.style.display = 'block';
+
+        document.getElementById('stat-project-name').textContent = data.team_name;
+        document.getElementById('stat-team-name').textContent = `Submission: ${data.submission_id}`;
+        document.getElementById('stat-overall-badge').textContent = data.submission_status;
+        document.getElementById('stat-verification').textContent = data.verification_status;
+        document.getElementById('stat-verification-details').textContent = data.verification_details || (data.commit_sha ? `Locked to commit: ${data.commit_sha.slice(0, 8)}` : 'Pending');
+        document.getElementById('stat-website').textContent = data.website_status || 'CHECKED';
+        document.getElementById('stat-website-details').textContent = data.deployed_website_url || 'N/A';
+        document.getElementById('stat-review').textContent = data.review_status;
+        document.getElementById('stat-eval-status').textContent = data.evaluation_job_status || 'NOT RUN';
+        document.getElementById('stat-final-score').textContent = (data.final_score !== null && data.final_score !== undefined) ? `${data.final_score.toFixed(2)} / 100` : 'Pending Score';
+        
+        const repoLink = document.getElementById('stat-repo-link');
+        repoLink.href = data.repository_url;
+        document.getElementById('stat-repo').textContent = data.repository_url;
+        document.getElementById('stat-commit').textContent = data.commit_sha ? data.commit_sha.slice(0, 10) : 'Pending';
+
+        const siteLink = document.getElementById('stat-site-link');
+        siteLink.href = data.deployed_website_url;
+        document.getElementById('stat-site').textContent = data.deployed_website_url || 'None';
+      } catch (e) {
+        alert('Failed to lookup submission.');
+      }
+    }
+
+    // 3. Leaderboard Loader
+    async function loadLeaderboard() {
+      const tbody = document.getElementById('leaderboard-tbody');
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-faint); padding: 2rem;">Loading leaderboard...</td></tr>';
+
+      try {
+        const res = await fetch('/api/v1/leaderboard');
+        const data = await res.json();
+        const list = data.leaderboard || [];
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2rem;">No evaluated submissions on the leaderboard yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(e => `
+          <tr>
+            <td style="font-weight: 700; color: ${e.rank === 1 ? 'var(--warning)' : '#fff'};">#${e.rank}</td>
+            <td>
+              <div style="font-weight: 700; color: #fff;">${e.team_name}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${e.submission_name}</div>
+            </td>
+            <td style="text-align: right; font-weight: 800; font-family: monospace; color: var(--cyan-accent);">${e.total_score.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace;">${e.forecast_skill.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace;">${e.event_detection.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace;">${e.generalization.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace;">${e.calibration.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace;">${e.robustness.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace;">${e.efficiency.toFixed(2)}</td>
+            <td style="text-align: right; font-family: monospace; font-size: 0.75rem; color: var(--text-faint);">${e.commit_sha.slice(0, 8)}</td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #F87171; padding: 2rem;">Failed to load leaderboard.</td></tr>';
+      }
+    }
+
+    // 4. Benchmark Loader
+    async function loadBenchmark() {
+      try {
+        const res = await fetch('/api/v1/benchmark');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('bm-dataset').textContent = data.dataset_name;
+          document.getElementById('bm-catchments').textContent = `${data.catchment_count} (${data.region_count} regions)`;
+          document.getElementById('bm-horizons').textContent = data.horizons_hours?.map(h => `${h}h`).join(', ') || 'Multi-step';
+
+          const tbody = document.getElementById('benchmark-splits-tbody');
+          tbody.innerHTML = Object.entries(data.split_manifests || {}).map(([name, info]) => `
+            <tr>
+              <td style="font-weight: 700; color: var(--cyan-accent); font-family: monospace; text-transform: uppercase;">${name}</td>
+              <td style="color: var(--text-muted);">
+                ${name === 'train' ? 'Reference calibration & training partition' : ''}
+                ${name === 'validation' ? 'Hyperparameter tuning & model selection' : ''}
+                ${name === 'test_a' ? 'In-distribution temporal holdout cases' : ''}
+                ${name === 'test_b' ? 'Out-of-distribution unseen catchment holdout' : ''}
+                ${name === 'test_c' ? 'Sensor corruption and missingness evaluation' : ''}
+              </td>
+              <td style="text-align: right; font-family: monospace; font-weight: 700; color: #fff;">${info.case_count}</td>
+              <td style="text-align: right; font-family: monospace;">${info.catchment_count}</td>
+              <td>${info.corruption_family ? `<span class="badge badge-warning">${info.corruption_family}</span>` : '<span class="badge badge-success">Clean Sensors</span>'}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        console.warn('Benchmark fetch error:', e);
+      }
+    }
+
+    // 5. Organizer Authentication & Management
+    function initOrganizerView() {
+      if (currentAuthToken) {
+        document.getElementById('organizer-auth-box').style.display = 'none';
+        document.getElementById('organizer-main-view').style.display = 'block';
+        loadOrganizerSubmissions();
+      } else {
+        document.getElementById('organizer-auth-box').style.display = 'block';
+        document.getElementById('organizer-main-view').style.display = 'none';
+      }
+    }
+
+    async function handleOrganizerLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('org-user').value;
+      const pass = document.getElementById('org-pass').value;
+      const alertBox = document.getElementById('org-login-alert');
+      alertBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/v1/organizer/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.token) {
+          currentAuthToken = data.token;
+          localStorage.setItem('hydraforge_organizer_token', currentAuthToken);
+          initOrganizerView();
+        } else {
+          alertBox.style.display = 'block';
+          alertBox.textContent = data.message || 'Authentication failed.';
+        }
+      } catch (err) {
+        alertBox.style.display = 'block';
+        alertBox.textContent = 'Server error during authentication.';
+      }
+    }
+
+    function organizerLogout() {
+      currentAuthToken = '';
+      localStorage.removeItem('hydraforge_organizer_token');
+      initOrganizerView();
+    }
+
+    async function loadOrganizerSubmissions() {
+      const tbody = document.getElementById('organizer-submissions-tbody');
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-faint); padding: 2rem;">Loading submissions...</td></tr>';
+
+      const statusFilter = document.getElementById('org-filter-status').value;
+      const search = document.getElementById('org-search-term').value.trim();
+
+      let url = `/api/v1/organizer/submissions?limit=100`;
+      if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+        });
+
+        if (res.status === 401) {
+          organizerLogout();
+          return;
+        }
+
+        const data = await res.json();
+        const list = data.submissions || [];
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">No participant submissions match your filters.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(s => `
+          <tr>
+            <td>
+              <div style="font-family: monospace; font-size: 0.75rem; color: var(--cyan-accent);">${s.submission_id.slice(0, 10)}...</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">${new Date(s.submitted_at).toLocaleDateString()}</div>
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #fff;">${s.team_name}</div>
+            </td>
+            <td>
+              <a href="${s.repository_url}" target="_blank" style="color: var(--cyan-accent); font-family: monospace; font-size: 0.8rem; text-decoration: underline;">
+                ${s.repository_url.replace('https://github.com/', '')}
+              </a>
+            </td>
+            <td>
+              <a href="${s.deployed_website_url}" target="_blank" style="color: var(--cyan-accent); font-size: 0.8rem; text-decoration: underline;">
+                Visit Site ↗
+              </a>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">${s.website_status || 'PENDING'}</div>
+            </td>
+            <td>
+              <code style="font-size: 0.75rem; color: #fff;" title="${s.commit_sha || ''}">
+                ${s.commit_sha ? s.commit_sha.slice(0, 8) : 'PENDING'}
+              </code>
+            </td>
+            <td>
+              <span class="badge ${s.verification_status === 'VERIFIED' ? 'badge-success' : (s.verification_status === 'FAILED' ? 'badge-danger' : 'badge-warning')}">
+                ${s.verification_status}
+              </span>
+            </td>
+            <td>
+              <span class="badge ${
+                s.organizer_review_status === 'ACCEPTED' ? 'badge-success' :
+                s.organizer_review_status === 'REJECTED' ? 'badge-danger' : 'badge-warning'
+              }">
+                ${s.organizer_review_status}
+              </span>
+            </td>
+            <td>
+              <div style="font-size: 0.8rem; font-weight: 600;">${s.submission_status}</div>
+              ${s.evaluation_final_score !== null && s.evaluation_final_score !== undefined ? `<div style="font-family: monospace; color: var(--cyan-accent); font-weight: 700;">${s.evaluation_final_score.toFixed(2)} pts</div>` : ''}
+            </td>
+            <td>
+              <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm" onclick="inspectSubmission('${s.submission_id}')">Inspect</button>
+                ${s.organizer_review_status !== 'ACCEPTED' ? `<button class="btn btn-success btn-sm" onclick="updateReview('${s.submission_id}', 'ACCEPTED')">Accept</button>` : ''}
+                ${s.organizer_review_status !== 'REJECTED' ? `<button class="btn btn-danger btn-sm" onclick="updateReview('${s.submission_id}', 'REJECTED')">Reject</button>` : ''}
+                ${s.organizer_review_status === 'ACCEPTED' && s.submission_status !== 'EVALUATION_COMPLETED' ? `<button class="btn btn-primary btn-sm" onclick="evaluateSubmission('${s.submission_id}')">Evaluate</button>` : ''}
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #F87171; padding: 2rem;">Error fetching submissions.</td></tr>';
+      }
+    }
+
+    async function inspectSubmission(id) {
+      try {
+        const res = await fetch(`/api/v1/organizer/submissions/${id}`, {
+          headers: { 'Authorization': `Bearer ${currentAuthToken}` }
+        });
+        if (!res.ok) return alert('Failed to fetch details');
+        const s = await res.json();
+
+        document.getElementById('modal-title').textContent = `Team: ${s.team_name} (${s.submission_id.slice(0, 10)})`;
+        document.getElementById('modal-body').innerHTML = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div><strong>Team Name:</strong> ${s.team_name}</div>
+            <div><strong>Submitted At:</strong> ${new Date(s.submitted_at).toLocaleString()}</div>
+            <div><strong>Verification:</strong> <span class="badge ${s.verification_status === 'VERIFIED' ? 'badge-success' : 'badge-danger'}">${s.verification_status}</span></div>
+            <div><strong>Website Status:</strong> <span class="badge ${s.website_status === 'ACTIVE' ? 'badge-success' : 'badge-warning'}">${s.website_status || 'PENDING'}</span></div>
+          </div>
+
+          <div style="margin-bottom: 1rem; background: var(--surface-dark); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div><strong>Git Repository:</strong> <a href="${s.repository_url}" target="_blank" style="color: var(--cyan-accent); font-family: monospace;">${s.repository_url}</a></div>
+            <div style="margin-top: 0.4rem;"><strong>Default Branch:</strong> <code>${s.default_branch || 'HEAD'}</code></div>
+            <div style="margin-top: 0.4rem;"><strong>Captured Commit SHA:</strong> <code style="color: var(--cyan-accent);">${s.commit_sha || 'Pending verification'}</code></div>
+            <div style="margin-top: 0.4rem;"><strong>Deployed Website:</strong> <a href="${s.deployed_website_url}" target="_blank" style="color: var(--cyan-accent);">${s.deployed_website_url}</a></div>
+            ${s.website_error ? `<div style="margin-top: 0.4rem; color: #FCA5A5;"><strong>Website Check Note:</strong> ${s.website_error}</div>` : ''}
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label><strong>Organizer Internal Notes (Private):</strong></label>
+            <textarea id="modal-notes" style="width: 100%; min-height: 80px;">${s.organizer_notes || ''}</textarea>
+            <button class="btn btn-secondary btn-sm" style="margin-top: 0.5rem;" onclick="saveNotes('${s.submission_id}')">Save Notes</button>
+          </div>
+        `;
+
+        document.getElementById('detail-modal').classList.add('active');
+      } catch (e) {
+        alert('Error loading submission details');
+      }
+    }
+
+    async function saveNotes(id) {
+      const notes = document.getElementById('modal-notes').value;
+      try {
+        const res = await fetch(`/api/v1/organizer/submissions/${id}/notes`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+          body: JSON.stringify({ notes })
+        });
+        if (res.ok) {
+          alert('Internal review notes saved.');
+          loadOrganizerSubmissions();
+        } else {
+          alert('Failed to save notes.');
+        }
+      } catch (e) {
+        alert('Network error saving notes.');
+      }
+    }
+
+    async function updateReview(id, status) {
+      if (!confirm(`Are you sure you want to mark this submission as ${status}?`)) return;
+      try {
+        const res = await fetch(`/api/v1/organizer/submissions/${id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+          body: JSON.stringify({ status })
+        });
+        if (res.ok) {
+          loadOrganizerSubmissions();
+        } else {
+          const err = await res.json();
+          alert(`Failed: ${err.message || err.error}`);
+        }
+      } catch (e) {
+        alert('Error updating status.');
+      }
+    }
+
+    async function evaluateSubmission(id) {
+      if (!confirm('Initiate automated evaluation now?')) return;
+      try {
+        const res = await fetch(`/api/v1/organizer/submissions/${id}/evaluate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentAuthToken}` },
+          body: JSON.stringify({})
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert(`Evaluation completed! Score: ${data.evaluation_result?.final_score}`);
+        } else {
+          alert(`Evaluation blocked safely: ${data.message || data.error}`);
+        }
+        loadOrganizerSubmissions();
+      } catch (e) {
+        alert('Error communicating with evaluation service.');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.remove('active');
+    }
+
+    // Initialize on load
+    window.onload = function() {
+      checkSystemHealth();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+{
+  "contract_version": "1.0.0",
+  "predictions": [
+    {
+      "forecast_timestamp": "2024-01-08T00:00:00Z",
+      "lead_day": 1,
+      "predicted_discharge_m3_s": 16.2,
+      "quantile_10": 13.5,
+      "quantile_50": 16.2,
+      "quantile_90": 20.1,
+      "prob_exceed_q95": 0.05,
+      "prob_exceed_q99": 0.01
+    },
+    {
+      "forecast_timestamp": "2024-01-09T00:00:00Z",
+      "lead_day": 2,
+      "predicted_discharge_m3_s": 24.8,
+      "quantile_10": 19.4,
+      "quantile_50": 24.8,
+      "quantile_90": 32.0,
+      "prob_exceed_q95": 0.22,
+      "prob_exceed_q99": 0.04
+    },
+    {
+      "forecast_timestamp": "2024-01-10T00:00:00Z",
+      "lead_day": 3,
+      "predicted_discharge_m3_s": 45.1,
+      "quantile_10": 34.0,
+      "quantile_50": 45.1,
+      "quantile_90": 61.3,
+      "prob_exceed_q95": 0.78,
+      "prob_exceed_q99": 0.35
+    },
+    {
+      "forecast_timestamp": "2024-01-11T00:00:00Z",
+      "lead_day": 4,
+      "predicted_discharge_m3_s": 35.6,
+      "quantile_10": 27.2,
+      "quantile_50": 35.6,
+      "quantile_90": 48.0,
+      "prob_exceed_q95": 0.45,
+      "prob_exceed_q99": 0.12
+    },
+    {
+      "forecast_timestamp": "2024-01-12T00:00:00Z",
+      "lead_day": 5,
+      "predicted_discharge_m3_s": 26.0,
+      "quantile_10": 20.5,
+      "quantile_50": 26.0,
+      "quantile_90": 34.2,
+      "prob_exceed_q95": 0.18,
+      "prob_exceed_q99": 0.03
+    },
+    {
+      "forecast_timestamp": "2024-01-13T00:00:00Z",
+      "lead_day": 6,
+      "predicted_discharge_m3_s": 20.4,
+      "quantile_10": 16.0,
+      "quantile_50": 20.4,
+      "quantile_90": 26.5,
+      "prob_exceed_q95": 0.08,
+      "prob_exceed_q99": 0.01
+    },
+    {
+      "forecast_timestamp": "2024-01-14T00:00:00Z",
+      "lead_day": 7,
+      "predicted_discharge_m3_s": 17.5,
+      "quantile_10": 14.1,
+      "quantile_50": 17.5,
+      "quantile_90": 22.8,
+      "prob_exceed_q95": 0.04,
+      "prob_exceed_q99": 0.005
+    }
+  ]
+}

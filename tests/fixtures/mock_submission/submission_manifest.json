@@ -1,0 +1,14 @@
+{
+  "team_name": "DevTeam-Fixture",
+  "submission_name": "TrustedMockPredictor",
+  "contract_version": "1.0.0",
+  "repository_url": "https://github.com/developer/mock-hydro-fixture",
+  "commit_sha": "0123456789abcdef0123456789abcdef01234567",
+  "dataset_declarations": {
+    "training_datasets": ["Synthetic Test Suite"],
+    "notes": "TRUSTED_TEST_ONLY - Software regression test fixture"
+  },
+  "pretrained_models": [],
+  "entrypoint": "run_forecast.py"
+}
+

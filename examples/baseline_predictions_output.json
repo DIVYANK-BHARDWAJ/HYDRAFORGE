@@ -1,0 +1,75 @@
+{
+  "contract_version": "1.0.0",
+  "predictions": [
+    {
+      "forecast_timestamp": "2024-01-08T00:00:00Z",
+      "lead_day": 1,
+      "predicted_discharge_m3_s": 14.355,
+      "quantile_10": 10.766,
+      "quantile_50": 14.355,
+      "quantile_90": 19.379,
+      "prob_exceed_q95": 0.063,
+      "prob_exceed_q99": 0.021
+    },
+    {
+      "forecast_timestamp": "2024-01-09T00:00:00Z",
+      "lead_day": 2,
+      "predicted_discharge_m3_s": 20.152,
+      "quantile_10": 15.114,
+      "quantile_50": 20.152,
+      "quantile_90": 27.205,
+      "prob_exceed_q95": 0.27,
+      "prob_exceed_q99": 0.09
+    },
+    {
+      "forecast_timestamp": "2024-01-10T00:00:00Z",
+      "lead_day": 3,
+      "predicted_discharge_m3_s": 31.184,
+      "quantile_10": 23.388,
+      "quantile_50": 31.184,
+      "quantile_90": 42.098,
+      "prob_exceed_q95": 0.4725,
+      "prob_exceed_q99": 0.1575
+    },
+    {
+      "forecast_timestamp": "2024-01-11T00:00:00Z",
+      "lead_day": 4,
+      "predicted_discharge_m3_s": 29.026,
+      "quantile_10": 21.77,
+      "quantile_50": 29.026,
+      "quantile_90": 39.186,
+      "prob_exceed_q95": 0.09,
+      "prob_exceed_q99": 0.03
+    },
+    {
+      "forecast_timestamp": "2024-01-12T00:00:00Z",
+      "lead_day": 5,
+      "predicted_discharge_m3_s": 24.942,
+      "quantile_10": 18.707,
+      "quantile_50": 24.942,
+      "quantile_90": 33.672,
+      "prob_exceed_q95": 0.0165,
+      "prob_exceed_q99": 0.0055
+    },
+    {
+      "forecast_timestamp": "2024-01-13T00:00:00Z",
+      "lead_day": 6,
+      "predicted_discharge_m3_s": 20.886,
+      "quantile_10": 15.665,
+      "quantile_50": 20.886,
+      "quantile_90": 28.196,
+      "prob_exceed_q95": 0.0,
+      "prob_exceed_q99": 0.0
+    },
+    {
+      "forecast_timestamp": "2024-01-14T00:00:00Z",
+      "lead_day": 7,
+      "predicted_discharge_m3_s": 17.408,
+      "quantile_10": 13.056,
+      "quantile_50": 17.408,
+      "quantile_90": 23.501,
+      "prob_exceed_q95": 0.0,
+      "prob_exceed_q99": 0.0
+    }
+  ]
+}
