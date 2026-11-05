@@ -115,19 +115,20 @@ class BenchmarkEvaluationPipeline:
 
     def __init__(
         self,
-        benchmark_root: Path,
+        benchmark_root: Optional[Path] = None,
         worker_manager: Optional[WorkerManager] = None,
         db_repository: Optional[Any] = None,
+        repository: Optional[Any] = None,
         scoring_evaluator: Optional[HydraForgeEvaluator] = None,
         prediction_validator: Optional[PredictionValidator] = None,
         split_evaluator: Optional[SplitEvaluator] = None,
         scratch_dir: Optional[Path] = None,
     ) -> None:
-        self.benchmark_root = Path(benchmark_root).resolve()
+        self.benchmark_root = Path(benchmark_root or "data/benchmark").resolve()
         self.case_manager = BenchmarkCaseManager(self.benchmark_root)
         self.input_preparer = BenchmarkInputPreparer()
         self.worker_manager = worker_manager or WorkerManager()
-        self.db_repo = db_repository
+        self.db_repo = db_repository or repository
         self.evaluator = scoring_evaluator or HydraForgeEvaluator()
         self.validator = prediction_validator or PredictionValidator()
         self.split_evaluator = split_evaluator or SplitEvaluator()

@@ -32,3 +32,4 @@ To restore the competition state from a logical dump:
    ```bash
    DATABASE_URL="$NEW_DATABASE_URL" python -m pytest tests/test_database.py
    ```
+

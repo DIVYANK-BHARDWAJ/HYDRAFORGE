@@ -255,6 +255,7 @@ class SubmissionService:
         return True, {
             "submission_id": submission_id,
             "organizer_review_status": review_status,
+            "review_status": review_status,
             "notes": notes
         }
 

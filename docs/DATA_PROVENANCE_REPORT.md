@@ -42,3 +42,4 @@ For software development, integration testing, CI/CD verification, and end-to-en
   - `test_c`: Controlled sensor perturbations (Robustness).
 - **Leakage Audit:** Cryptographically audited with zero temporal leakage (`is_leakage_free: True`).
 - **Label Shielding:** Hidden labels are maintained in isolated directories (`data/benchmark/labels/`) and strictly shielded from participant containers.
+

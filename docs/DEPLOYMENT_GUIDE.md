@@ -68,3 +68,4 @@ docker compose -f docker-compose.prod.yml up -d --build
    ```bash
    python scripts/verify_queue_postgres.py
    ```
+

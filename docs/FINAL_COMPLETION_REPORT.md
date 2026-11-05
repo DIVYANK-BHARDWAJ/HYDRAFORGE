@@ -40,3 +40,4 @@ All requirements from Phases 1 through 5, the Phase 4B Correction Mandate, and t
 - **GitHub Remote:** `https://github.com/DIVYANK-BHARDWAJ/HYDRAFORGE.git`
 - **Main Branch:** Synchronized and pushed.
 - **Security:** `.env` and sensitive database secrets are strictly excluded via `.gitignore`. A sanitized template is provided in `.env.example`.
+

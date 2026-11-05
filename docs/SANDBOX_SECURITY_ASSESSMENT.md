@@ -28,3 +28,4 @@ Every security control was evaluated through automated offensive payloads in `te
 18. **Clean Worker Termination**: Container removed (`docker rm -f`) on any exit signal.
 19. **Cleanup After Failure**: Scratch files and containers completely wiped on failure.
 20. **Fail-Closed on Worker Unavailable**: If Docker daemon is unreachable, execution halts fail-closed.
+

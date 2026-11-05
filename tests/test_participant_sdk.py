@@ -87,3 +87,4 @@ def test_validator_detects_all_contract_violations():
     v3, errs3 = validate_prediction_payload(bad_prob)
     assert not v3
     assert any("prob_exceed_q95" in e for e in errs3)
+

@@ -51,3 +51,4 @@ The model must produce a single JSON object with:
 3. **Quantile Monotonicity**: \(q_{10} \le q_{50} \le q_{90}\).
 4. **Probability Bounds**: \(0.0 \le p \le 1.0\).
 5. **Coverage**: Exactly 7 records matching requested lead days \(1 \dots 7\).
+

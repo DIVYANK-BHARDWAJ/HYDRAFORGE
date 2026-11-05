@@ -46,3 +46,4 @@
 - Submissions evaluated against the standard benchmark receive an official composite score \(S \in [0, 100]\).
 - Only the highest-scoring verified submission per team is displayed on the public leaderboard.
 - Organizers may manually trigger re-evaluations if needed.
+

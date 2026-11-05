@@ -471,30 +471,6 @@ class EvaluationRepository:
                 results.append(d)
             return results
 
-    def update_submission_verification(
-        self,
-        submission_id: str,
-        verification_status: str,
-        verification_details: Optional[str] = None
-    ) -> bool:
-        """Update repository verification status (e.g. VERIFIED or FAILED)."""
-        with self.db.transaction() as conn:
-            cur = conn.execute(
-                """
-                UPDATE submissions SET
-                    verification_status = ?,
-                    verification_details = ?,
-                    submission_status = CASE
-                        WHEN ? = 'VERIFIED' THEN 'VERIFIED'
-                        WHEN ? = 'FAILED' THEN 'SUBMISSION_REJECTED'
-                        ELSE submission_status
-                    END
-                WHERE submission_id = ?;
-                """,
-                (verification_status, verification_details, verification_status, verification_status, submission_id)
-            )
-            return cur.rowcount > 0
-
     def update_submission_review(
         self,
         submission_id: str,

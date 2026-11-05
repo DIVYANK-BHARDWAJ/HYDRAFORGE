@@ -33,3 +33,4 @@ Participant GitHub Repo  ---> SSRF Filter   ---> Docker Isolated Container ---> 
 1. **Fail-Closed Default**: Any timeout, crash, or unexpected behavior immediately terminates execution with zero score awarded.
 2. **Zero-Trust Network**: Containers run with `--network none`. No outbound socket can be opened.
 3. **Least Privilege**: Workers and participant containers execute under unprivileged user IDs (`10001:10001`).
+

@@ -41,3 +41,4 @@ Evaluated under controlled input corruptions (missing sensors, Gaussian noise, s
 ### 6. Efficiency (5 Points)
 - Metric: Wall-clock latency per forecast sample (2.5 pts) and peak memory usage (2.5 pts).
   \[ S_{\text{eff}} = 2.5 \times \min\left(1, \frac{100\,\text{ms}}{\text{latency}}\right) + 2.5 \times \min\left(1, \frac{512\,\text{MB}}{\text{peak RAM}}\right) \]
+

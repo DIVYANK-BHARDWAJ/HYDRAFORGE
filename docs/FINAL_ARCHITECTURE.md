@@ -67,3 +67,4 @@ The final score \(S \in [0, 100]\) is the sum of six deterministic axes:
 4. **Calibration** (15 pts): Coverage error and CRPS of probabilistic quantiles.
 5. **Robustness** (10 pts): Performance degradation under sensor corruptions (Test C).
 6. **Efficiency** (5 pts): Wall-clock inference latency and peak memory usage.
+

@@ -275,7 +275,7 @@ def test_evaluation_uses_captured_commit_sha(client_and_repo, valid_two_field_pa
 
     # If Docker daemon is offline, fails closed safely
     if eval_res.status_code == 503:
-        assert eval_res.get_json()["error"] == "UNSAFE_EXECUTION_ENVIRONMENT"
+        assert eval_res.get_json()["error"] in ("UNSAFE_EXECUTION_ENVIRONMENT", "SAFE_WORKER_UNAVAILABLE")
     elif eval_res.status_code == 200:
         data = eval_res.get_json()
         assert data["commit_sha"] == captured_sha

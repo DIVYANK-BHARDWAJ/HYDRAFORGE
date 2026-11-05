@@ -111,3 +111,4 @@ All organizer endpoints require an `Authorization: Bearer <token>` or `X-API-Key
 ### 3.2 System Status
 - **Route:** `GET /api/v1/system`
 - **Response (200 OK):** Execution backends, Docker daemon status, active worker count, benchmark version.
+

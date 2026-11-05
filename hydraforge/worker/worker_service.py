@@ -149,3 +149,4 @@ class EvaluationWorkerDaemon:
             signal.signal(signal.SIGTERM, handler)
         except Exception:
             pass
+

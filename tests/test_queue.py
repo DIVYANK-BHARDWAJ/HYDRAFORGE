@@ -170,3 +170,4 @@ def test_cancel_job(clean_queue):
 
     item = queue.get_item_by_job_id("job_cancel")
     assert item.status == QueueStatus.CANCELLED
+

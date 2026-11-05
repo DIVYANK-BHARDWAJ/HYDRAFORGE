@@ -403,3 +403,4 @@ class PersistentEvaluationQueue:
             completed_at=d.get("completed_at"),
             error_message=d.get("error_message"),
         )
+

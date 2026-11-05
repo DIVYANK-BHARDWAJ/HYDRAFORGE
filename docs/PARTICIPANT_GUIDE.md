@@ -61,3 +61,4 @@ All 7 lead-day predictions must have:
 - Non-negative discharge values (\(Q \ge 0\))
 - Monotonic quantiles (\(q_{10} \le q_{50} \le q_{90}\))
 - Exceedance probabilities in \([0.0, 1.0]\)
+

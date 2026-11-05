@@ -33,3 +33,4 @@ All scoring formulas were subjected to empirical stress testing across edge case
 4. **Leakage Audit**:
    - 0 temporal violations detected across all test splits.
    - Ground-truth hidden labels verified unaccessible from prediction containers.
+

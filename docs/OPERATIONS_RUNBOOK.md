@@ -53,3 +53,4 @@ python -c "from hydraforge.evaluation.queue import PersistentEvaluationQueue; q 
 ### Playbook 3: Database Connection Outage
 - **Symptom:** API returns HTTP 500 with database connection errors.
 - **Remediation:** Verify Neon connection string in `.env`, check network egress, and test connection with `scripts/verify_db_connection.py`.
+

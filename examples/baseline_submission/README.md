@@ -45,3 +45,4 @@ Submit your GitHub repository URL on the public participant portal:
 - Provide your Team Name and public GitHub Repository URL.
 - The platform automatically identifies the default branch and records the immutable HEAD commit SHA.
 - No secrets or credentials should ever be committed to your repository.
+
