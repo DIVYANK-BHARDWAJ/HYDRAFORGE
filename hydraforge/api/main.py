@@ -42,12 +42,15 @@ def create_app(db_path: Path | None = None) -> Flask:
     app.register_blueprint(organizer_bp)
 
     # Serve Organizer Frontend Dashboard
+    dist_dir = Path("frontend/dist").resolve()
     web_dir = Path(__file__).resolve().parent / "web"
     web_dir.mkdir(parents=True, exist_ok=True)
 
     @app.route("/", methods=["GET"])
     @app.route("/dashboard", methods=["GET"])
     def index():
+        if dist_dir.exists() and (dist_dir / "index.html").exists():
+            return send_from_directory(dist_dir, "index.html")
         index_file = web_dir / "index.html"
         if index_file.exists():
             return send_from_directory(web_dir, "index.html")
@@ -62,6 +65,14 @@ def create_app(db_path: Path | None = None) -> Flask:
                 "/api/v1/system"
             ]
         })
+
+    @app.route("/assets/<path:filename>", methods=["GET"])
+    def serve_assets(filename: str):
+        if dist_dir.exists() and (dist_dir / "assets").exists():
+            return send_from_directory(dist_dir / "assets", filename)
+        if (web_dir / "assets").exists():
+            return send_from_directory(web_dir / "assets", filename)
+        return jsonify({"error": "NOT_FOUND"}), 404
 
     @app.errorhandler(404)
     def handle_not_found(e):
