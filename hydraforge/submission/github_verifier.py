@@ -8,6 +8,7 @@ retrieving default branch and HEAD commit SHA, or preserving submission as pendi
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import urllib.request
@@ -60,14 +61,19 @@ def resolve_github_head_commit(
     if _MOCK_GITHUB_RESOLVER is not None:
         return _MOCK_GITHUB_RESOLVER(clean_url)
 
-    # 1. Try public GitHub REST API without token
+    # 1. Try GitHub REST API (anonymous or using optional server-side GITHUB_TOKEN for elevated rate limits)
     try:
         owner, repo_name = parse_github_owner_repo(clean_url)
+        headers = {
+            "User-Agent": "HYDRAFORGE-Evaluator/1.0",
+            "Accept": "application/vnd.github.v3+json",
+        }
+        token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
         api_repo_url = f"https://api.github.com/repos/{owner}/{repo_name}"
-        req = urllib.request.Request(
-            api_repo_url,
-            headers={"User-Agent": "HYDRAFORGE-Evaluator/1.0", "Accept": "application/vnd.github.v3+json"}
-        )
+        req = urllib.request.Request(api_repo_url, headers=headers)
 
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -75,10 +81,7 @@ def resolve_github_head_commit(
 
         # Now fetch HEAD commit for default branch
         api_commit_url = f"https://api.github.com/repos/{owner}/{repo_name}/commits/{default_branch}"
-        req_commit = urllib.request.Request(
-            api_commit_url,
-            headers={"User-Agent": "HYDRAFORGE-Evaluator/1.0", "Accept": "application/vnd.github.v3+json"}
-        )
+        req_commit = urllib.request.Request(api_commit_url, headers=headers)
         with urllib.request.urlopen(req_commit, timeout=timeout) as resp_commit:
             commit_data = json.loads(resp_commit.read().decode("utf-8"))
             sha = commit_data.get("sha", "")
