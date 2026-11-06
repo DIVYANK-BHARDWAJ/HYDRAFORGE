@@ -150,3 +150,9 @@ class EvaluationWorkerDaemon:
         except Exception:
             pass
 
+
+if __name__ == "__main__":
+    daemon = EvaluationWorkerDaemon()
+    daemon.start()
+
+
