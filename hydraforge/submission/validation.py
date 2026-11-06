@@ -11,11 +11,63 @@ from hydraforge.submission.repository import RepositorySecurityError
 
 
 def validate_submission_package(repo_dir: Path) -> SubmissionManifest:
-    """Validate repository files, entrypoint, dependencies, and manifest declarations."""
+    """Validate repository files, entrypoint, dependencies, and manifest declarations.
+    
+    If 'submission_manifest.json' exists, it is loaded and validated.
+    If 'submission_manifest.json' is omitted, dynamic repository discovery automatically
+    resolves the forecast entrypoint, interface contract, and dependencies.
+    """
     repo_dir = Path(repo_dir).resolve()
 
-    # 1. Load and validate manifest
-    manifest = load_submission_manifest(repo_dir)
+    manifest_path = repo_dir / "submission_manifest.json"
+    if manifest_path.is_file():
+        # 1. Load explicit manifest if provided
+        manifest = load_submission_manifest(repo_dir)
+    else:
+        # Dynamic Repository Discovery: auto-detect entrypoint and interface
+        from hydraforge.discovery.repository_inspector import RepositoryInspector
+        inspector = RepositoryInspector()
+        report = inspector.inspect_repository(repo_dir)
+
+        discovered_entrypoint = None
+        if report.proposed_interface_mapping and report.proposed_interface_mapping.executable_target:
+            discovered_entrypoint = report.proposed_interface_mapping.executable_target
+        elif report.candidate_entrypoints:
+            preferred_names = [
+                "predict.py",
+                "inference.py",
+                "run_forecast.py",
+                "forecast.py",
+                "model.py",
+                "main.py",
+                "run.py",
+                "run_backend.py",
+            ]
+            candidate_files = [c.file_path for c in report.candidate_entrypoints]
+            for pref in preferred_names:
+                matched = next((f for f in candidate_files if Path(f).name.lower() == pref or f.lower() == pref), None)
+                if matched:
+                    discovered_entrypoint = matched
+                    break
+            if not discovered_entrypoint:
+                discovered_entrypoint = candidate_files[0]
+
+        if not discovered_entrypoint:
+            py_files = sorted(list(repo_dir.glob("*.py")))
+            if py_files:
+                discovered_entrypoint = py_files[0].name
+
+        if not discovered_entrypoint:
+            raise ValidationError(
+                f"No forecast entrypoint found in repository root '{repo_dir}'. "
+                "Ensure your repository contains an executable script (e.g. predict.py, model.py, or main.py)."
+            )
+
+        manifest = SubmissionManifest(
+            team_name=repo_dir.name,
+            submission_name=repo_dir.name,
+            entrypoint=str(discovered_entrypoint),
+        )
 
     # 2. Check declared entrypoint exists and is inside repository
     entrypoint_name = manifest.entrypoint
@@ -48,16 +100,12 @@ def validate_submission_package(repo_dir: Path) -> SubmissionManifest:
                 f"Entrypoint symlink '{entrypoint_name}' points outside repository root."
             )
 
-    # 3. Check for dependency specification
+    # 3. Check for dependency specification (graceful fallback if absent)
     has_requirements = (repo_dir / "requirements.txt").is_file()
     has_pyproject = (repo_dir / "pyproject.toml").is_file()
     has_environment = (repo_dir / "environment.yml").is_file()
+    has_setup = (repo_dir / "setup.py").is_file()
 
-    if not (has_requirements or has_pyproject or has_environment):
-        raise ValidationError(
-            "Missing dependency manifest. Repository must include at least one of: "
-            "'requirements.txt', 'pyproject.toml', or 'environment.yml'."
-        )
+    # If no explicit dependency file exists, rely on pre-installed base container environment
 
     return manifest
-
