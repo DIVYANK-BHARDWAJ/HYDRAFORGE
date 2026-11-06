@@ -1,0 +1,25 @@
+# HYDRAFORGE Isolated ML Model Execution Container
+FROM python:3.11-slim
+
+WORKDIR /workspace
+
+# Install common ML and scientific libraries for participant inference
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir --default-timeout=120 \
+    numpy \
+    scipy \
+    pandas \
+    scikit-learn
+
+# Create non-root user (matching UID 1000)
+RUN groupadd -g 1000 appuser && \
+    useradd -u 1000 -g appuser -s /bin/bash -m appuser
+
+# Create standard directories
+RUN mkdir -p /inputs /outputs /workspace && \
+    chown -R appuser:appuser /inputs /outputs /workspace
+
+USER 1000:1000

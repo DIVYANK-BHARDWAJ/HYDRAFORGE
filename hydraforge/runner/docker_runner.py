@@ -112,6 +112,16 @@ class DockerRunner(BaseRunner):
             runtime = time.perf_counter() - start_time
             is_success = proc.returncode == 0
 
+            fail_msg = None
+            if not is_success:
+                err_text = (proc.stderr or proc.stdout or "").strip()
+                if err_text:
+                    lines = [ln.strip() for ln in err_text.splitlines() if ln.strip()]
+                    summary = lines[-1] if lines else err_text
+                    fail_msg = f"Container exited with code {proc.returncode}: {summary}"
+                else:
+                    fail_msg = f"Container exited with code {proc.returncode}"
+
             return RunnerExecutionResult(
                 exit_code=proc.returncode,
                 stdout=proc.stdout,
@@ -120,7 +130,7 @@ class DockerRunner(BaseRunner):
                 peak_memory_mb=None,  # Reported via container stats if enabled
                 output_dir=output_dir,
                 is_success=is_success,
-                failure_reason=None if is_success else f"Container exited with code {proc.returncode}"
+                failure_reason=fail_msg
             )
         except subprocess.TimeoutExpired as e:
             raise ExecutionTimeoutError(
