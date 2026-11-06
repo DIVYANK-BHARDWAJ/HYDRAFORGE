@@ -154,6 +154,7 @@ export interface SubmissionRecord {
   linked_evaluation_job_id: string | null;
   evaluation_job_status?: string | null;
   evaluation_final_score?: number | null;
+  evaluation_failure_reason?: string | null;
 }
 
 export interface PublicSubmissionStatus {
@@ -169,6 +170,7 @@ export interface PublicSubmissionStatus {
   submission_status: string;
   linked_evaluation_job_id: string | null;
   evaluation_job_status: string | null;
+  evaluation_failure_reason?: string | null;
   final_score: number | null;
 }
 

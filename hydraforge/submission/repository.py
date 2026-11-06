@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ipaddress
+import os
 import re
 import shutil
 import subprocess
@@ -24,7 +25,7 @@ APPROVED_GIT_DOMAINS: Set[str] = {
 
 COMMIT_SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 
-DEFAULT_MAX_REPO_SIZE_MB = 100.0
+DEFAULT_MAX_REPO_SIZE_MB = float(os.environ.get("HYDRAFORGE_MAX_REPO_SIZE_MB", "250.0"))
 DEFAULT_MAX_FILE_COUNT = 2000
 DEFAULT_MAX_PATH_DEPTH = 8
 
@@ -146,6 +147,10 @@ class RepositoryIntake:
                 rel_parts = path.relative_to(target_dir).parts
             except ValueError:
                 raise RepositorySecurityError(f"Path traversal detected: {path}")
+
+            # Exclude .git internal objects from participant source quota calculations
+            if rel_parts and rel_parts[0] == ".git":
+                continue
 
             if len(rel_parts) > self.max_depth:
                 raise RepositorySecurityError(

@@ -52,6 +52,8 @@ export const OrganizerConsole: React.FC = () => {
   useEffect(() => {
     if (token) {
       fetchSubmissions();
+      const interval = setInterval(fetchSubmissions, 3000);
+      return () => clearInterval(interval);
     }
   }, [token, statusFilter]);
 
@@ -287,9 +289,36 @@ export const OrganizerConsole: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4 font-sans text-xs">
-                    <div className="text-slate-300 font-medium">{sub.submission_status}</div>
-                    {sub.evaluation_final_score !== null && sub.evaluation_final_score !== undefined && (
-                      <div className="text-cyan-400 font-mono font-bold">{sub.evaluation_final_score.toFixed(2)} pts</div>
+                    {sub.submission_status === 'EVALUATION_QUEUED' ? (
+                      <div className="flex items-center space-x-1.5 text-cyan-400">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                        </span>
+                        <span className="font-semibold text-[11px]">EVALUATING...</span>
+                      </div>
+                    ) : sub.submission_status === 'EVALUATION_COMPLETED' ? (
+                      <div>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 border border-emerald-800 text-emerald-300">
+                          COMPLETED
+                        </span>
+                        {sub.evaluation_final_score !== null && sub.evaluation_final_score !== undefined && (
+                          <div className="text-cyan-400 font-mono font-bold mt-0.5">{sub.evaluation_final_score.toFixed(2)} pts</div>
+                        )}
+                      </div>
+                    ) : sub.submission_status === 'EVALUATION_FAILED' ? (
+                      <div>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 border border-rose-800 text-rose-300">
+                          FAILED
+                        </span>
+                        {sub.evaluation_failure_reason && (
+                          <div className="text-[10px] text-rose-400/90 mt-1 max-w-[200px] truncate" title={sub.evaluation_failure_reason}>
+                            {sub.evaluation_failure_reason}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-slate-400 font-medium">{sub.submission_status}</div>
                     )}
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -375,6 +404,41 @@ export const OrganizerConsole: React.FC = () => {
                   <div className="text-rose-400"><strong>Website Error / Notice:</strong> {selectedSub.website_error}</div>
                 )}
                 <div><strong>Verification Details:</strong> {selectedSub.verification_details || 'N/A'}</div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                <h4 className="font-sans font-bold text-sm text-cyan-400">Evaluation Diagnostics & Result</h4>
+                <div className="flex items-center space-x-2">
+                  <strong>Lifecycle Status:</strong>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                    selectedSub.submission_status === 'EVALUATION_COMPLETED'
+                      ? 'bg-emerald-950 border-emerald-800 text-emerald-300'
+                      : selectedSub.submission_status === 'EVALUATION_FAILED'
+                      ? 'bg-rose-950 border-rose-800 text-rose-300'
+                      : selectedSub.submission_status === 'EVALUATION_QUEUED'
+                      ? 'bg-cyan-950 border-cyan-800 text-cyan-300'
+                      : 'bg-slate-900 border-slate-700 text-slate-300'
+                  }`}>
+                    {selectedSub.submission_status}
+                  </span>
+                </div>
+                {selectedSub.linked_evaluation_job_id && (
+                  <div><strong>Job ID:</strong> <code>{selectedSub.linked_evaluation_job_id}</code></div>
+                )}
+                {selectedSub.evaluation_job_status && (
+                  <div><strong>Job Execution Status:</strong> <code>{selectedSub.evaluation_job_status}</code></div>
+                )}
+                {selectedSub.evaluation_failure_reason && (
+                  <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800 text-rose-300 font-sans text-xs">
+                    <span className="font-bold block mb-1">Evaluation Rejection / Failure:</span>
+                    {selectedSub.evaluation_failure_reason}
+                  </div>
+                )}
+                {selectedSub.evaluation_final_score !== null && selectedSub.evaluation_final_score !== undefined && (
+                  <div className="text-emerald-400 font-mono font-bold text-sm pt-1">
+                    Official Benchmark Score: {selectedSub.evaluation_final_score.toFixed(2)} pts
+                  </div>
+                )}
               </div>
 
               <div>
